@@ -17,16 +17,17 @@ from linebot.models import (
 
 app = Flask(__name__)
 
-# get channel_secret and channel_access_token from your environment variable
+# 環境変数からchannel_secretとchannel_access_tokenを所得する
 channel_secret = "YOUR_CHANNEL_SECRET"
 channel_access_token = "YOUR_CHANNEL_ACCESS"
-if channel_secret is None:
-    print('Specify LINE_CHANNEL_SECRET as environment variable.')
+if channel_secret is None: #LINE_CHANNEL_SECRETが指定されていないとき
+    print('環境変数としてLINE_CHANNEL_SECRETを指定してください。')
     sys.exit(1)
-if channel_access_token is None:
-    print('Specify LINE_CHANNEL_ACCESS_TOKEN as environment variable.')
+if channel_access_token is None: #LINE_CHANNEL_SECRETが指定されていないとき
+    print('環境変数としてLINE_CHANNEL_ACCESS_TOKENを指定してください。')
     sys.exit(1)
 
+# 各クライアントライブラリのインスタンス作成
 line_bot_api = LineBotApi(channel_access_token)
 parser = WebhookParser(channel_secret)
 
@@ -45,13 +46,13 @@ def callback():
     except InvalidSignatureError:
         abort(400)
 
-    # if event is MessageEvent and message is TextMessage, then echo text
+    # イベントがMessageEvent(メッセージが送られた場合のイベント)であり,かつメッセージがTextMessage(文字)であるとき,オウム返しをする
     for event in events:
         if not isinstance(event, MessageEvent):
             continue
         if not isinstance(event.message, TextMessage):
             continue
-
+　　　　# ↓テキストのオウム返し部分
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=event.message.text)
